@@ -17,7 +17,7 @@ class URLMonitor:
     real		   = {} # LEO: diccionario host / real
     patchDict	   = {
     		'https:\/\/fbstatic-a.akamaihd.net':'http:\/\/webfbstatic-a.akamaihd.net',
-    		'https:\/\/www.facebook.com':'http:\/\/social.facebook.com',
+    		'https:\/\/www.facebook.com':'http:\/\/wwww.facebook.com',
     		'return"https:"':'return"http:"'
     		}
 
@@ -26,23 +26,14 @@ class URLMonitor:
         self.strippedURLPorts   = {}
         self.faviconReplacement = False
         
-        self.sustitucion["mail.google.com"] = "gmail.google.com"
-        self.real["gmail.google.com"] = "mail.google.com"
-        
-        self.sustitucion["www.facebook.com"] = "social.facebook.com"
-        self.real["social.facebook.com"] = "www.facebook.com"
-        
-        self.sustitucion["accounts.google.com"] = "cuentas.google.com"
-        self.real["cuentas.google.com"] = "accounts.google.com"
-        
-        self.sustitucion["accounts.google.es"] = "cuentas.google.es"
-        self.real["cuentas.google.es"] = "accounts.google.es"
-
     def isSecureLink(self, client, url):
         for expression in URLMonitor.javascriptTrickery:
             if (re.match(expression, url)):
+                logging.debug("JavaScript trickery!")
                 return True
 
+        if (client, url) in self.strippedURLs:
+            logging.debug("(%s, %s) in strippedURLs" % (client, url))
         return (client,url) in self.strippedURLs
 
     def getSecurePort(self, client, url):

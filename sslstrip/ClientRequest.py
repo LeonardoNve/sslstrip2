@@ -34,6 +34,9 @@ from URLMonitor import URLMonitor
 from CookieCleaner import CookieCleaner
 from DnsCache import DnsCache
 
+def NUEVO_LOG(str):
+	return
+
 class ClientRequest(Request):
 
     ''' This class represents incoming client requests and is essentially where
@@ -52,7 +55,6 @@ class ClientRequest(Request):
 
     def cleanHeaders(self):
         headers = self.getAllHeaders().copy()
-
         if 'accept-encoding' in headers:
             del headers['accept-encoding']
 
@@ -75,7 +77,7 @@ class ClientRequest(Request):
         	host = self.urlMonitor.URLgetRealHost("%s"%headers['host'])
         	logging.debug("Modifing HOST header: %s -> %s"%(headers['host'],host))
         	headers['host'] = host
-        	headers['securelink'] = '1'
+        	#headers['securelink'] = '1'
         	self.setHeader('Host',host)
 
         return headers
